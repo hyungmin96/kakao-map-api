@@ -1,1 +1,40 @@
 
+server:
+  port: 8000
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  output:
+    ansi:
+      enabled: always
+  handlerbars:
+    suffix: .jsp
+  devtools:
+    restart:
+      enabled: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3307/kakaomap?serverTimezone=Asia/Seoul
+    username: root
+    password: 110731
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
