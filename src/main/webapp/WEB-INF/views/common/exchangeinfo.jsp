@@ -12,6 +12,18 @@
 </head>
 
 <body>
+
+<div class="writerExchangeImgContainer">
+    <input type="file" class="upload" multiple>
+</div>
+<div id="previewImageContainer">
+
+</div>
+
+<div>
+    <textarea class="contentBox"></textarea>
+</div>
+
 <div class="residenceContainer">
     <h2>거주지역 설정</h2>
     <input type="text" class="inputbox" id="sample5_address" disabled = "true" placeholder="주소">
@@ -24,7 +36,7 @@
 <h2>거래지역 설정</h2>
     <div>
         <input type="text" class="inputbox" id="exchange_address" disabled = "true" placeholder="주소">
-        <button onclick="openSerachContent('/registMapAddress', ''); getAddress();">검색</button>
+        <button onclick="openSerachContent('/writer/map', ''); getAddress();">검색</button>
         <div>
             <input type="hidden" class="longitudeValue" value="">
             <input type="hidden" class="latitudeValue" value="">

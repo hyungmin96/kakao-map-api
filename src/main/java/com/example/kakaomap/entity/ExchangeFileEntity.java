@@ -1,14 +1,14 @@
 package com.example.kakaomap.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "tbl_exchange_file")
 public class ExchangeFileEntity extends BaseTimeEntity {
 

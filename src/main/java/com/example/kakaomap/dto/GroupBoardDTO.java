@@ -1,5 +1,8 @@
-package com.example.kakaomap.entity;
+package com.example.kakaomap.dto;
 
+import com.example.kakaomap.entity.GroupBoardEntity;
+import com.example.kakaomap.entity.GroupBoardFileEntity;
+import com.example.kakaomap.entity.WriterExchangeEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,7 @@ GroupBoardDTO implements Serializable {
     private int page;
     private int display;
 
+    // 게시글 DTO
     private Long groupId;
     private Long boardId;
     private String type = "general";
@@ -27,8 +31,14 @@ GroupBoardDTO implements Serializable {
     private LocalDateTime regTime;
     private int boardLike = 0;
     private MultipartFile[] board_img;
-    private WriterExchangeEntity writerExchangeEntity;
     private List<GroupBoardFileEntity> files = new ArrayList<>();
+
+    // 게시글 거래위치 DTO
+    private String residence;
+    private String longitude;
+    private String latitude;
+    private String location;
+    private String preferTime;
 
     public void addFile(GroupBoardFileEntity file){
         files.add(file);
@@ -38,12 +48,24 @@ GroupBoardDTO implements Serializable {
         return GroupBoardEntity.builder()
                 .groupId(groupId)
                 .content(content)
-                .exchange(writerExchangeEntity)
                 .boardLike(0)
                 .BoardCategory(getCategory())
                 .type(getType())
                 .files(files)
                 .build();
+    }
+
+    public WriterExchangeEntity getWriterExchangeEntity(GroupBoardEntity entity){
+        if(this.category.equals("exchange")){
+            return WriterExchangeEntity.builder()
+                    .residence(residence)
+                    .longitude(longitude)
+                    .location(location)
+                    .groupBoard(entity)
+                    .latitude(latitude)
+                    .exchangeTime(preferTime)
+                    .build();
+        } else return null;
     }
 
     public GroupBoardEntity.BoardType getType(){

@@ -1,6 +1,9 @@
 package com.example.kakaomap.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -25,18 +28,19 @@ public class WriterExchangeEntity extends BaseTimeEntity {
     @Column(name = "writer_latitude") // 위도
     private String latitude;
 
-    @Column(name = "writer_preper_time")
+    @Column(name = "writer_prefer_time")
     private String exchangeTime;
 
     @Column(name = "writer_residence")
     private String residence;
 
-    @OneToOne(mappedBy = "exchange", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
     private GroupBoardEntity groupBoard;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "process_id")
-    private ExchangeProcessEntity exchangeProcessEntity;
+    @JoinColumn(name = "exchange_client_id")
+    private ClientExchangeEntity exchangeClient;
 
     @OneToMany(mappedBy = "writerExchangeEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ClientExchangeEntity> clients;

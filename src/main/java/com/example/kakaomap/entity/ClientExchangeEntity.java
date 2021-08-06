@@ -1,15 +1,16 @@
 package com.example.kakaomap.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.List;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "tbl_client_exchange")
 public class ClientExchangeEntity extends BaseTimeEntity {
 
@@ -17,26 +18,19 @@ public class ClientExchangeEntity extends BaseTimeEntity {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(name = "client_location")
-    private String location;
+    @Column(name = "client_user_id")
+    private Long userId;
 
-    @Column(name = "client_longitude") // 경도
-    private String longitude;
+    @Column(name = "client_cotent")
+    private String content;
 
-    @Column(name = "client_latitude") // 위도
-    private String latitude;
+    @Column(name = "client_price")
+    private String price;
 
-    @Column(name = "client_preper_time")
-    private String exchangeTime;
+    @Column(name = "client_request")
+    private String request;
 
-    @Column(name = "client_residence")
-    private String residence;
-
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "process_id")
-    private ExchangeProcessEntity exchangeProcessEntity;
-
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY) // 교환을 요청한 게시글의 info entity
     @JoinColumn(name = "writer_id")
     private WriterExchangeEntity writerExchangeEntity;
 
