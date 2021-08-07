@@ -2,16 +2,12 @@ package com.example.kakaomap.api;
 
 import com.example.kakaomap.dto.ClientExchangeDTO;
 import com.example.kakaomap.dto.GroupBoardDTO;
-import com.example.kakaomap.entity.ClientExchangeEntity;
-import com.example.kakaomap.entity.GroupBoardEntity;
-import com.example.kakaomap.entity.GroupBoardFileEntity;
+import com.example.kakaomap.entity.*;
 import com.example.kakaomap.service.GroupExchangeService;
 import com.querydsl.jpa.impl.JPAQuery;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.domain.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,8 +22,8 @@ public class GroupExchangeApiController {
     private final GroupExchangeService groupExchangeService;
 
     @PostMapping("/select/request")
-    public void selectRequestEntity(ClientExchangeDTO clientExchangeDTO){
-        groupExchangeService.selectRequest(clientExchangeDTO);
+    public ResponseRequestExchangeDTO selectRequestEntity(ClientExchangeDTO clientExchangeDTO){
+        return groupExchangeService.selectRequest(clientExchangeDTO);
     }
 
     @GetMapping("/get_request_list")
@@ -56,17 +52,41 @@ public class GroupExchangeApiController {
     }
 
     @Setter @Getter
+    public static class ResponseRequestExchangeDTO{
+
+        private Long userId; // writer id
+        private String username;
+        private String userProfile;
+        private Long clientUserId;
+        private String clilentUsername;
+        private String clientProfile;
+        private Long boardId;
+        private Long clientId;
+
+        public ResponseRequestExchangeDTO(WriterClientJoinEntity entity){
+            this.userId = entity.getWriterId();
+//            this.username = entity.getContent();
+//            this.userProfile = entity.getPrice();
+            this.clientUserId = entity.getClientId();
+//            this.clilentUsername = entity.getUserId();
+//            this.clientProfile = entity.getContent();
+            this.boardId = entity.getWriterExchangeEntity().getId();
+            this.clientId = entity.getClientExchangeEntity().getId();
+        }
+    }
+
+    @Setter @Getter
     @NoArgsConstructor
     public static class ResponseClientDTO{
         private Long clientId;
         private Long userId;
-        private Long processId; // 거래가 진행중인 entity index
         private Long writerId;
         private String username;
         private String userProfile;
-        private String content;
-        private String price;
-        private String request;
+        private String content; // client's product description
+        private String price; // add price with product or none product
+        private String request; // client's request content
+        private WriterClientJoinEntity.status status; // To check exchange was progressing
         private List<String> file;
 
         public ResponseClientDTO(ClientExchangeEntity entity) {
@@ -106,12 +126,12 @@ public class GroupExchangeApiController {
             this.type = entity.getType();
             this.content = entity.getContent();
             this.boardFiles = entity.getFiles().stream().map(GroupBoardFileEntity::getName).collect(Collectors.toList());
-            if(entity.getExchange() != null){
-                this.residence = entity.getExchange().getResidence();
-                this.longitude = entity.getExchange().getLongitude();
-                this.latitude = entity.getExchange().getLatitude();
-                this.location = entity.getExchange().getLocation();
-                this.preferTime = entity.getExchange().getExchangeTime();
+            if (entity.getWriterExchangeEntity() != null) {
+                this.residence = entity.getWriterExchangeEntity().getResidence();
+                this.longitude = entity.getWriterExchangeEntity().getLongitude();
+                this.latitude = entity.getWriterExchangeEntity().getLatitude();
+                this.location = entity.getWriterExchangeEntity().getLocation();
+                this.preferTime = entity.getWriterExchangeEntity().getExchangeTime();
             }
         }
     }

@@ -37,7 +37,7 @@
             success: function(response){
                 $.each(response.content, function(key, value){
                     console.log(value)
-                    let exchangeCancelButton = (value.clientId === value.processId) ?  "<button class='exchangeButton'>취소</button>" : ''
+                    let exchangeCancelButton = (value.status === 'process') ?  "<button class='exchangeButton'>취소</button>" : ''
                     $('.exchangeRequestContainer').append(
                         "<div id=clientRequest_" + value.clientId + " class='clientRequestBox' style='margin: 3px 0 3px 0; border: 1px solid black;'>" +
                             value.content + "<br />" +
@@ -50,19 +50,16 @@
                 })
             }
         })
-
     })
 
     $(document).on('click', '.exchangeButton', function (){
         const index = $('.exchangeButton').index(this)
         const clientId = $('.clientRequestBox')[index].getAttribute('id').split('_')[1]
-
         const data = {
             groupId: 1,
             boardId: 1,
             clientId: clientId
         }
-
         $.ajax({
             url: '/api/exchange/select/request',
             type: 'POST',
@@ -72,7 +69,6 @@
                 console.log(response)
             }
         })
-
     })
 
 </script>

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface WriterExchangeRepository extends JpaRepository<WriterExchangeEntity, Long> {
-    @Query(value = "select w.clients from WriterExchangeEntity w where w.groupBoard = :groupBoard")
-    List<ClientExchangeEntity> findAllRequestList(GroupBoardEntity groupBoard);
+
+    @Query("select g.writerExchangeEntity from GroupBoardEntity g where g.boardId = :boardId")
+    WriterExchangeEntity findWriterExchangeEntityByboardId(Long boardId);
+
 }

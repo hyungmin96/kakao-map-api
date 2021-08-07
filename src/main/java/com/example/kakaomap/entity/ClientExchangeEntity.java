@@ -31,11 +31,13 @@ public class ClientExchangeEntity extends BaseTimeEntity {
     @Column(name = "client_request")
     private String request;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 교환을 요청한 게시글의 info entity
-    @JoinColumn(name = "writer_id")
-    private WriterExchangeEntity writerExchangeEntity;
+    @Column(name = "boardId")
+    private Long boardId;
 
     @OneToMany(mappedBy = "client", fetch = LAZY, cascade = CascadeType.ALL)
     private List<ExchangeFileEntity> files;
+
+    @OneToMany(mappedBy = "clientExchangeEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<WriterClientJoinEntity> writerClientJoinEntity;
 
 }

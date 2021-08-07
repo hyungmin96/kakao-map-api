@@ -38,8 +38,9 @@ public class GroupBoardEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BoardCategory BoardCategory;
 
-    @OneToOne(mappedBy = "groupBoard", fetch = LAZY, cascade = CascadeType.ALL)
-    private WriterExchangeEntity exchange;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "exchange_id")
+    private WriterExchangeEntity writerExchangeEntity;
 
     @OneToMany(mappedBy = "groupBoard", fetch = LAZY, cascade = CascadeType.ALL)
     private List<GroupBoardFileEntity> files;

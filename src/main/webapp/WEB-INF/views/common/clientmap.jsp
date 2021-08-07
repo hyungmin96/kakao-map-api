@@ -90,7 +90,7 @@
                 $.each(response.boardFiles, function(key, value){
                     $('.writerBoardImageContainer').append(
                         "<div>" +
-                            "<img src=/upload" + value + ">" +
+                            "<img src=/upload/" + value + ">" +
                         "</div>"
                     )
                 })

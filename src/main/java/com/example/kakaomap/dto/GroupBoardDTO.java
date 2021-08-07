@@ -39,32 +39,30 @@ GroupBoardDTO implements Serializable {
     private String latitude;
     private String location;
     private String preferTime;
-    private WriterExchangeEntity.status status = WriterExchangeEntity.status.wait;
 
     public void addFile(GroupBoardFileEntity file){
         files.add(file);
     }
 
-    public GroupBoardEntity toEntity(){
+    public GroupBoardEntity toEntity(WriterExchangeEntity writerExchangeEntity){
         return GroupBoardEntity.builder()
                 .groupId(groupId)
                 .content(content)
                 .boardLike(0)
+                .writerExchangeEntity(writerExchangeEntity)
                 .BoardCategory(getCategory())
                 .type(getType())
                 .files(files)
                 .build();
     }
 
-    public WriterExchangeEntity getWriterExchangeEntity(GroupBoardEntity entity){
+    public WriterExchangeEntity getWriterExchangeEntity(){
         if(this.category.equals("exchange")){
             return WriterExchangeEntity.builder()
                     .residence(residence)
                     .longitude(longitude)
                     .location(location)
-                    .groupBoard(entity)
                     .latitude(latitude)
-                    .status(status)
                     .exchangeTime(preferTime)
                     .build();
         } else return null;

@@ -29,11 +29,11 @@ public class ClientExchangeDTO implements Serializable {
         this.files.add(file);
     }
 
-    public ClientExchangeEntity toEntity(WriterExchangeEntity writerExchangeEntity){
+    public ClientExchangeEntity toEntity(){
             return ClientExchangeEntity
                     .builder()
                     .content(content)
-                    .writerExchangeEntity(writerExchangeEntity)
+                    .boardId(boardId)
                     .request(request)
                     .price(price)
                     .userId(userId)
