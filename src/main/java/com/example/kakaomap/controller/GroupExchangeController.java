@@ -14,11 +14,6 @@ public class GroupExchangeController {
         return "/common/wrtiermap";
     }
 
-    @GetMapping("/client/map")
-    public String getClient(){
-        return "/common/clientmap";
-    }
-
     // 게시글 작성 controller
     @GetMapping("/post/board")
     public String getRegistInfo(){
@@ -30,7 +25,7 @@ public class GroupExchangeController {
         return "/common/exchangeview";
     }
 
-    @GetMapping("/info/board/exchange/{boardId}")
+    @GetMapping("/request/exchange/{boardId}")
     public String getBoardInfo(Model model, GroupBoardDTO groupBoardDTO){
         model.addAttribute("board", groupBoardDTO.getBoardId());
         return "/common/clientmap";

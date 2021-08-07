@@ -39,6 +39,7 @@ GroupBoardDTO implements Serializable {
     private String latitude;
     private String location;
     private String preferTime;
+    private WriterExchangeEntity.status status = WriterExchangeEntity.status.wait;
 
     public void addFile(GroupBoardFileEntity file){
         files.add(file);
@@ -63,6 +64,7 @@ GroupBoardDTO implements Serializable {
                     .location(location)
                     .groupBoard(entity)
                     .latitude(latitude)
+                    .status(status)
                     .exchangeTime(preferTime)
                     .build();
         } else return null;

@@ -1,16 +1,22 @@
 package com.example.kakaomap.service;
 
+import com.example.kakaomap.api.GroupExchangeApiController;
 import com.example.kakaomap.component.GenerateFile;
 import com.example.kakaomap.dto.*;
 import com.example.kakaomap.entity.*;
 import com.example.kakaomap.repository.*;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
+import static com.example.kakaomap.entity.QClientExchangeEntity.clientExchangeEntity;
+import static com.example.kakaomap.entity.QWriterExchangeEntity.writerExchangeEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +27,33 @@ public class GroupExchangeService {
     private final ClientExchangeRepository clientExchangeRepository;
     private final ClientExchangeFileRepository clientExchangeFileRepository;
     private final WriterExchangeRepository writerExchangeRepository;
+    private final JPAQueryFactory queryFactory;
     private final GenerateFile generateFile;
 
 
-    public List<ClientExchangeEntity> getClientRequestList(GroupBoardDTO groupBoardDTO){
-        GroupBoardEntity groupBoard = groupBoardRepository.getById(groupBoardDTO.getBoardId());
-        return writerExchangeRepository.findAllRequestList(groupBoard);
+    public void selectRequest(ClientExchangeDTO clientExchangeDTO){
+        WriterExchangeEntity writerExchangeEntity = writerExchangeRepository.getById(clientExchangeDTO.getBoardId());
+        ClientExchangeEntity clientExchangeEntity = clientExchangeRepository.getById(clientExchangeDTO.getClientId());
+
+        writerExchangeEntity.updateStatus(WriterExchangeEntity.status.process);
+        writerExchangeEntity.selectExchangeEntity(clientExchangeEntity);
+        writerExchangeRepository.save(writerExchangeEntity);
+    }
+
+    public JPAQuery<GroupExchangeApiController.ResponseClientDTO> getClientRequestList(GroupBoardDTO groupBoardDTO, Pageable page){
+        return queryFactory
+                .select(Projections.fields(GroupExchangeApiController.ResponseClientDTO.class,
+                        writerExchangeEntity.exchange.id.as("processId"),
+                        clientExchangeEntity.id.as("clientId"),
+                        clientExchangeEntity.content.as("content"),
+                        clientExchangeEntity.price.as("price"),
+                        clientExchangeEntity.request.as("request"),
+                        clientExchangeEntity.writerExchangeEntity.id.as("writerId"),
+                        clientExchangeEntity.userId.as("userId")))
+                .from(clientExchangeEntity)
+                .where(writerExchangeEntity.id.eq(groupBoardDTO.getBoardId()))
+                .offset(page.getPageNumber())
+                .limit(page.getPageSize());
     }
 
     public ClientExchangeEntity clientPost(ClientExchangeDTO clientExchangeDTO){
@@ -64,10 +91,6 @@ public class GroupExchangeService {
 
     public GroupBoardEntity getExchangeInfo(GroupBoardDTO groupBoardDTO){
         return groupBoardRepository.getExchangeInfo(groupBoardDTO.getBoardId());
-    }
-
-    public List<GroupBoardEntity> getExchangeBoards(GroupBoardDTO groupBoardDTO){
-        return groupBoardRepository.getExchangeBoards(groupBoardDTO.getGroupId());
     }
 
 }

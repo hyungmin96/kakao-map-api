@@ -14,6 +14,7 @@ import java.util.List;
 @Setter @Getter
 public class ClientExchangeDTO implements Serializable {
 
+    private Long clientId;
     private Long userId;
     private String username;
     private String userProfile;

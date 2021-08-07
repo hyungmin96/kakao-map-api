@@ -1,6 +1,7 @@
 package com.example.kakaomap.entity;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.springframework.context.annotation.Lazy;
 
@@ -34,15 +35,32 @@ public class WriterExchangeEntity extends BaseTimeEntity {
     @Column(name = "writer_residence")
     private String residence;
 
+    @Column(name = "writer_status")
+    @Enumerated(EnumType.STRING)
+    private status status;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private GroupBoardEntity groupBoard;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "exchange_client_id")
-    private ClientExchangeEntity exchangeClient;
+    @JoinColumn(name = "exchange_id")
+    private ClientExchangeEntity exchange;
 
     @OneToMany(mappedBy = "writerExchangeEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @BatchSize(size = 1000)
     private List<ClientExchangeEntity> clients;
+
+    public enum status{
+        wait, process, complete
+    }
+
+    public void updateStatus(status status){
+        this.status = status;
+    }
+
+    public void selectExchangeEntity(ClientExchangeEntity exchange){
+        this.exchange = exchange;
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.example.kakaomap.entity;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ClientExchangeEntity extends BaseTimeEntity {
     @Column(name = "client_request")
     private String request;
 
-    @ManyToOne(fetch = LAZY) // 교환을 요청한 게시글의 info entity
+    @ManyToOne(fetch = FetchType.LAZY) // 교환을 요청한 게시글의 info entity
     @JoinColumn(name = "writer_id")
     private WriterExchangeEntity writerExchangeEntity;
 

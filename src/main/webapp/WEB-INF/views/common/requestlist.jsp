@@ -27,7 +27,7 @@
             page: 0,
             display: 10,
             groupId: 1,
-            boardId: 5
+            boardId: 1
         }
 
         $.ajax({
@@ -35,14 +35,16 @@
             type: 'GET',
             data: data,
             success: function(response){
-                console.log(response)
                 $.each(response.content, function(key, value){
+                    console.log(value)
+                    let exchangeCancelButton = (value.clientId === value.processId) ?  "<button class='exchangeButton'>취소</button>" : ''
                     $('.exchangeRequestContainer').append(
-                        "<div style='margin: 3px 0 3px 0; border: 1px solid black;'>" +
+                        "<div id=clientRequest_" + value.clientId + " class='clientRequestBox' style='margin: 3px 0 3px 0; border: 1px solid black;'>" +
                             value.content + "<br />" +
                             value.price + "<br />" +
                             value.request +
                         "<button class='exchangeButton'>교환</button>" +
+                        exchangeCancelButton +
                         "</div>"
                     )
                 })
@@ -51,4 +53,31 @@
 
     })
 
+    $(document).on('click', '.exchangeButton', function (){
+        const index = $('.exchangeButton').index(this)
+        const clientId = $('.clientRequestBox')[index].getAttribute('id').split('_')[1]
+
+        const data = {
+            groupId: 1,
+            boardId: 1,
+            clientId: clientId
+        }
+
+        $.ajax({
+            url: '/api/exchange/select/request',
+            type: 'POST',
+            data: data,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function(response){
+                console.log(response)
+            }
+        })
+
+    })
+
 </script>
+
+
+
+
+
