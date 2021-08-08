@@ -31,7 +31,7 @@ public class ClientExchangeEntity extends BaseTimeEntity {
     @Column(name = "client_request")
     private String request;
 
-    @Column(name = "boardId")
+    @Column(name = "board_Id")
     private Long boardId;
 
     @OneToMany(mappedBy = "client", fetch = LAZY, cascade = CascadeType.ALL)

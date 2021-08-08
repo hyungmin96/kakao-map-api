@@ -12,7 +12,7 @@
 </head>
 
 <body>
-
+    <input type="hidden" class="boardId" value="${boardId}">
     <div class="exchangeRequestContainer">
 
     </div>
@@ -27,7 +27,7 @@
             page: 0,
             display: 10,
             groupId: 1,
-            boardId: 1
+            boardId: $('.boardId').val()
         }
 
         $.ajax({
@@ -37,13 +37,14 @@
             success: function(response){
                 $.each(response.content, function(key, value){
                     console.log(value)
-                    let exchangeCancelButton = (value.status === 'process') ?  "<button class='exchangeButton'>취소</button>" : ''
+                    let exchangeCancelButton = (value.status === 'process') ?  "<button class='exchangeCancelButton'>취소</button>" : ''
                     $('.exchangeRequestContainer').append(
                         "<div id=clientRequest_" + value.clientId + " class='clientRequestBox' style='margin: 3px 0 3px 0; border: 1px solid black;'>" +
                             value.content + "<br />" +
                             value.price + "<br />" +
                             value.request +
                         "<button class='exchangeButton'>교환</button>" +
+                        "<button class='exchangeDelteButton'>삭제</button>" +
                         exchangeCancelButton +
                         "</div>"
                     )
@@ -52,12 +53,30 @@
         })
     })
 
+    $(document).on('click', '.exchangeDelteButton', '.exchangeCancelButton', function () {
+        const clientId = $(this)[0].parentElement.id.split('_')[1]
+        const data = {
+            groupId: 1,
+            clientId: clientId
+        }
+        $.ajax({
+            url: '/api/exchange/cancel/request',
+            type: 'POST',
+            data: data,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function(response){
+                console.log(response)
+            }
+        })
+    })
+
+    // 교환 요청
     $(document).on('click', '.exchangeButton', function (){
         const index = $('.exchangeButton').index(this)
         const clientId = $('.clientRequestBox')[index].getAttribute('id').split('_')[1]
         const data = {
             groupId: 1,
-            boardId: 1,
+            boardId: $('.boardId').val(),
             clientId: clientId
         }
         $.ajax({

@@ -7,9 +7,7 @@ import com.example.kakaomap.service.GroupExchangeService;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.*;
 import org.springframework.data.domain.*;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +18,11 @@ import java.util.stream.Collectors;
 public class GroupExchangeApiController {
 
     private final GroupExchangeService groupExchangeService;
+
+    @PostMapping("/cancel/request")
+    public void cancelRequestEntity(ClientExchangeDTO clientExchangeDTO){
+        groupExchangeService.cancelRequest(clientExchangeDTO);
+    }
 
     @PostMapping("/select/request")
     public ResponseRequestExchangeDTO selectRequestEntity(ClientExchangeDTO clientExchangeDTO){
@@ -49,6 +52,13 @@ public class GroupExchangeApiController {
     public ResponseBoardDTO getExchangeInfo(GroupBoardDTO groupBoardDTO){
         GroupBoardEntity groupBoardEntity = groupExchangeService.getExchangeInfo(groupBoardDTO);
         return new ResponseBoardDTO(groupBoardEntity);
+    }
+
+    @GetMapping("/get_board_list")
+    public Page<ResponseBoardDTO> getBoardList(GroupBoardDTO groupBoardDTO){
+        Pageable page = PageRequest.of(groupBoardDTO.getPage(), groupBoardDTO.getDisplay(), Sort.Direction.ASC, "id");
+        JPAQuery<ResponseBoardDTO> query = groupExchangeService.getBoardList(groupBoardDTO, page);
+        return new PageImpl<>(query.fetch(), page, query.fetchCount());
     }
 
     @Setter @Getter
@@ -99,7 +109,7 @@ public class GroupExchangeApiController {
 
 
     @Setter @Getter
-    static class ResponseBoardDTO {
+    public static class ResponseBoardDTO {
         // 게시글 DTO
         private String result;
         private Long userId;
@@ -108,6 +118,7 @@ public class GroupExchangeApiController {
         private LocalDateTime regTime;
         private Long boardId;
         private int boardLike;
+        private GroupBoardEntity.BoardCategory BoardCategory;
         private String content;
         private GroupBoardEntity.BoardType type; // 그룹 공지, 일반 글
         private List<String> boardFiles;
@@ -123,6 +134,7 @@ public class GroupExchangeApiController {
             this.regTime = entity.getRegTime();
             this.boardId = entity.getBoardId();
             this.boardLike = entity.getBoardLike();
+            this.BoardCategory = entity.getBoardCategory();
             this.type = entity.getType();
             this.content = entity.getContent();
             this.boardFiles = entity.getFiles().stream().map(GroupBoardFileEntity::getName).collect(Collectors.toList());

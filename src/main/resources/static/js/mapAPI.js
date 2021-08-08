@@ -59,6 +59,7 @@ function uploadImagesToBoard(files){
     formData.append('residence', $('#sample5_address').val() + ' ' + $('.inputbox')[0].value)
     formData.append('longitude', $('.longitudeValue')[0].value)
     formData.append('latitude', $('.latitudeValue')[0].value)
+    formData.append('groupId', 1)
     formData.append('location', $('#exchange_address').val())
     formData.append('preferTime', $('#exchange_time').val())
     formData.append('content', $('.contentBox').val())

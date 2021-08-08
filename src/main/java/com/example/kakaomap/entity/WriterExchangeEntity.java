@@ -35,6 +35,9 @@ public class WriterExchangeEntity extends BaseTimeEntity {
     @Column(name = "writer_residence")
     private String residence;
 
+    @OneToOne(mappedBy = "writerExchangeEntity", fetch = FetchType.LAZY)
+    private GroupBoardEntity boardId;
+
     @OneToMany(mappedBy = "writerExchangeEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<WriterClientJoinEntity> writerClientJoinEntity;
 

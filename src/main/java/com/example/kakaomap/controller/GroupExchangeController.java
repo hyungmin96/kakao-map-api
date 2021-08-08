@@ -37,4 +37,9 @@ public class GroupExchangeController {
         return "common/requestlist";
     }
 
+    @GetMapping("/")
+    public String getBoardList(){
+        return "/common/boardList";
+    }
+
 }

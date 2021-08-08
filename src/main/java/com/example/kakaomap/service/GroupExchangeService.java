@@ -9,13 +9,13 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.example.kakaomap.api.GroupExchangeApiController.ResponseBoardDTO;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.example.kakaomap.entity.QGroupBoardEntity.groupBoardEntity;
 import static com.example.kakaomap.entity.QWriterClientJoinEntity.writerClientJoinEntity;
 
@@ -40,7 +40,7 @@ public class GroupExchangeService {
         Integer isProgressEntity = queryFactory
                 .selectOne()
                 .from(writerClientJoinEntity)
-                .where(writerClientJoinEntity.writerExchangeEntity.id.eq(clientExchangeDTO.getBoardId())
+                .where(writerClientJoinEntity.clientExchangeEntity.boardId.eq(clientExchangeDTO.getBoardId())
                 .and(writerClientJoinEntity.status.eq(WriterClientJoinEntity.status.process)))
                 .fetchFirst();
         // if isProgress value is 'null', request exchange to writer entity
@@ -51,8 +51,7 @@ public class GroupExchangeService {
                     .fetchJoin()
                     .join(QWriterClientJoinEntity.writerClientJoinEntity.clientExchangeEntity)
                     .fetchJoin()
-                    .where(QWriterClientJoinEntity.writerClientJoinEntity.writerExchangeEntity.id.eq(clientExchangeDTO.getBoardId())
-                    .and(QWriterClientJoinEntity.writerClientJoinEntity.clientExchangeEntity.id.eq(clientExchangeDTO.getClientId())))
+                    .where(QWriterClientJoinEntity.writerClientJoinEntity.clientExchangeEntity.id.eq(clientExchangeDTO.getClientId()))
                     .fetchOne();
             // update exchange status
             writerClientJoinEntity.updateStatus(WriterClientJoinEntity.status.process);
@@ -77,6 +76,12 @@ public class GroupExchangeService {
                 .where(writerClientJoinEntity.clientExchangeEntity.boardId.eq(groupBoardDTO.getBoardId()))
                 .offset(page.getPageNumber())
                 .limit(page.getPageSize());
+    }
+
+    // client의 요청을 삭제
+    // delete the client's exchange request
+    public void cancelRequest(ClientExchangeDTO clientExchangeDTO){
+        writerClientJoinRepository.deleteById(clientExchangeDTO.getClientId());
     }
 
     // client가 writer 게시글에 교환을 요청
@@ -117,6 +122,17 @@ public class GroupExchangeService {
                 .fetchJoin()
                 .where(groupBoardEntity.boardId.eq(groupBoardDTO.getBoardId()))
                 .fetchOne();
+    }
+
+    public JPAQuery<ResponseBoardDTO> getBoardList(GroupBoardDTO groupBoardDTO, Pageable page){
+        return queryFactory
+                .select(Projections.constructor(ResponseBoardDTO.class, groupBoardEntity))
+                .from(groupBoardEntity)
+                .leftJoin(groupBoardEntity.writerExchangeEntity)
+                .fetchJoin()
+                .offset(page.getPageNumber())
+                .limit(page.getPageSize())
+                .where(groupBoardEntity.groupId.eq(groupBoardDTO.getGroupId()));
     }
 
 }
